@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--Data records go here -->
+        <!--Add the action that opens the view -->
+        <act_window id="library_book_action" name="Library Books" res_model="library.book"/>
+        <!--Add new menu item-->    
+        <menuitem
+            id="library_book_menu"
+            name="Library"
+            action="library_book_action"
+            parent=""
+            sequence="5" />
+
+            <record id="library_book_view_form" model="ir.ui.view">
+                <field name="name">Library Book Form</field>
+                <field name="model">library.book</field>
+                <field name="arch" type="xml">
+                <!--custom form-->
+                    <form>
+                        <group>
+                            <field name="name" /><!--Label-->
+                            <field name="author_ids" widget="many2many_tags"/>                        
+                        </group>
+                        <group>
+                            <field name="date_release"/>
+                        </group>
+                    </form>     
+                </field>           
+            </record>
+
+            <!--custom tree or items list-->
+            <record id="library_book_view_tree" model="ir.ui.view">
+                <field name="name">Library Book List</field>
+                <field name="model">library.book</field>
+                <field name="arch" type="xml">
+                    <tree>
+                        <field name="name"/>
+                        <field name="date_release"/>
+                    </tree>
+                </field>
+            </record>
+            
+            <!--custom search-->
+            <record id="library_book_view_search" model="ir.ui.view">
+                <field name="name">Library Book Searchs</field>
+                <field name="model">library.book</field>
+                <field name="arch" type="xml">
+                    <search>
+                        <field name="name" />
+                        <field name="author_ids" />
+                        <filter string="No Authors" domain="[('author_ids', '=' , False)]"/>
+                    </search>
+                </field>
+            </record>
+    </data>
+</openerp>
