@@ -16,11 +16,12 @@
                 <field name="name">Library Book Form</field>
                 <field name="model">library.book</field>
                 <field name="arch" type="xml">
+                <!--arch: This is the view architecture, where its structure is actually defined. This is where different types of View differ from each other. -->
                 <!--custom form-->
                     <form>
                         <group>
-                            <field name="name" /><!--Label-->
-                            <field name="author_ids" widget="many2many_tags"/>                        
+                            <field name="name" /><!--Name-->
+                            <field name="author_ids" widget="many2many_tags"/><!--authors-->
                         </group>
                         <group>
                             <field name="date_release"/>
