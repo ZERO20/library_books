@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from openerp import models, fields
+from openerp.addons import decimal_precision as dp#Decimal Precision Configuration
 
 class LibraryBook(models.Model):    
     """
@@ -77,6 +78,7 @@ class LibraryBook(models.Model):
         company_dependent=False
         )
     reader_rating = fields.Float('Reader Average Rating', (14,4)) #optional precision (total, decimals)
+    cost_price = fields.Float('Book Cost', dp.get_precision('Book Price'))#Get Decimal Accuracy Configuration
 
     def name_get(self):
         """
