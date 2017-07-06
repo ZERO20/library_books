@@ -79,6 +79,11 @@ class LibraryBook(models.Model):
         )
     reader_rating = fields.Float('Reader Average Rating', (14,4)) #optional precision (total, decimals)
     cost_price = fields.Float('Book Cost', dp.get_precision('Book Price'))#Get Decimal Accuracy Configuration
+    currency_id = fields.Many2one('res.currency', string = 'Currency')
+    retail_price = fields.Monetary(
+        'Retail Price',
+        # optional: currency_field='currency_field'
+        )
 
     def name_get(self):
         """
