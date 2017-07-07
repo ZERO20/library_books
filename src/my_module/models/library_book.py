@@ -90,7 +90,8 @@ class LibraryBook(models.Model):
         )#Add the monetary field to store our amount
     publisher_id =  fields.Many2one('res.partner', string='Publisher' ,
         #optional:
-        ondelete = 'set null',#determines what happens when the related record is deleted. The default is 'set null', setting an empty value on the field.
+        ondelete = 'set null',#determines what happens when the related record is deleted. The default is 'set null', setting an empty value on the field. 
+        #It can also be 'restrict', which prevents the related record from being deleted, or 'cascade', which causes the linked record to also be deleted.
         context = {},#Adds variables to the client context when clicking through the field to the related record's view
         domain = [],#Is a search filter used to limit the list of related records available for selection when choosing a value for our field.
         )
