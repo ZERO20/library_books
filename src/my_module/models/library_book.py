@@ -46,7 +46,11 @@ class LibraryBook(models.Model):
     translate=False, #also for Text fields
     )
     date_release = fields.Date('Release Date')
-    author_ids = fields.Many2many('res.partner', string = 'Authors')
+    author_ids = fields.Many2many('res.partner',
+        string = 'Authors'
+        #The relation table name is, by default, built using the name of the two related models plus a _rel suffix. But, we can override it using the relation attribute.
+        #the PostgreSQL limit is of 63 characters
+        )
     notes = fields.Text('Internal Notes')
     state = fields.Selection(
         [
@@ -79,10 +83,16 @@ class LibraryBook(models.Model):
         )
     reader_rating = fields.Float('Reader Average Rating', (14,4)) #optional precision (total, decimals)
     cost_price = fields.Float('Book Cost', dp.get_precision('Book Price'))#Get Decimal Accuracy Configuration
-    currency_id = fields.Many2one('res.currency', string = 'Currency')
+    currency_id = fields.Many2one('res.currency',string = 'Currency')#Add the field to store the currency that is to be used
     retail_price = fields.Monetary(
         'Retail Price',
         # optional: currency_field='currency_field'
+        )#Add the monetary field to store our amount
+    publisher_id =  fields.Many2one('res.partner', string='Publisher' ,
+        #optional:
+        ondelete = 'set null',#determines what happens when the related record is deleted. The default is 'set null', setting an empty value on the field.
+        context = {},#Adds variables to the client context when clicking through the field to the related record's view
+        domain = [],#Is a search filter used to limit the list of related records available for selection when choosing a value for our field.
         )
 
     def name_get(self):
