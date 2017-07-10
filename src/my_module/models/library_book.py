@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.addons import decimal_precision as dp#Decimal Precision Configuration
+from datetime import timedelta as td
 
 class LibraryBook(models.Model):    
     """
@@ -46,6 +47,7 @@ class LibraryBook(models.Model):
         'UNIQUE (name)',
         'Book title must be unique.')
         ]
+
     name = fields.Char('Title',required = True, help='Help text example')
     short_name = fields.Char(string='Short Title',
     size=100, #For Char only
@@ -101,6 +103,18 @@ class LibraryBook(models.Model):
         context = {},#Adds variables to the client context when clicking through the field to the related record's view
         domain = [],#Is a search filter used to limit the list of related records available for selection when choosing a value for our field.
         )
+    age_days = fields.Float(
+        string='Days since Release',
+        compute = '_compute_age',
+        inverse = '_inverse_age',
+        search = '_search_age',
+        store = False,#Makes the field stored in the database.
+        compute_sudo = False
+    )
+    publisher_city = fields.Char(
+        'Publisher City',
+        related='publisher_id.city' #A string for the separated chain of fields to traverse.
+        )
 
     def name_get(self):
         """
@@ -122,3 +136,22 @@ class LibraryBook(models.Model):
         for r in self:
             if r.date_release > fields.Date.today():
                 raise models.ValidationError('Release date must be in the past')
+
+    @api.depends('date_release')
+    def _compute_age(self):
+        today = fields.Date.from_string(fields.Date.today())
+        for book in self.filtered('date_release'):
+            delta = (fields.Date.from_string(book.date_release) - today)
+            book.age_days = delta.days
+
+    def _inverse_age(self):
+        today = fields.Date.from_string(fields.Date.today())
+        for book in self.filtered('date_release'):
+            d = td(days=book.age_days) - today
+            book.date_release = fields.Date.to_string(d)
+
+    def _search_age(self, operator, value):
+        today = fields.Date.from_string(fields.Date.today())
+        value_days = td(days=value)
+        value_date = fields.Date.to_string(today - value_days)
+        return [('date_release', operator, value_date)]    
