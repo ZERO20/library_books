@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-from openerp import models, fields
+from openerp import models, fields, api
 from openerp.addons import decimal_precision as dp#Decimal Precision Configuration
 
 class LibraryBook(models.Model):    
@@ -39,7 +39,13 @@ class LibraryBook(models.Model):
     _description = 'Library Book'#add a human-friendly title to the model.
     _order = 'date_release desc, name'#To have records sorted first by default from newer to older and then by title.
     _rec_name = 'short_name'
-
+    _sql_constraints = [
+        #Accepts a list of constraints to create. Each constraint is defined by a three element tuple
+        #The _constraints model attribute is still available but has been deprecated since version 8.0. Instead, we should use methods with the new @api.constrains decorator.
+        ('name_uniq',
+        'UNIQUE (name)',
+        'Book title must be unique.')
+        ]
     name = fields.Char('Title',required = True, help='Help text example')
     short_name = fields.Char(string='Short Title',
     size=100, #For Char only
@@ -106,3 +112,13 @@ class LibraryBook(models.Model):
             print(fields.Date.from_string('2017-06-27'),' soy yo')
             result.append((record.id, "{} ({})".format(record.name, record.date_release)))
         return result
+
+    @api.constrains('date_release')
+    def _check_release_date(self):
+        """
+            Method to perform a Python code validation. It is decorated with @api.constrains, meaning that it should be executed 
+            to run checks when one of the fields in the argument list is changed. If the check fails, a ValidationError exception should be raised.
+        """
+        for r in self:
+            if r.date_release > fields.Date.today():
+                raise models.ValidationError('Release date must be in the past')
